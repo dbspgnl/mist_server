@@ -1,0 +1,38 @@
+
+* Stream info json: 
+   http://127.0.0.1:8080/json_stream123.js
+
+* Stream info script:
+   http://127.0.0.1:8080/info_stream123.js
+
+* http://127.0.0.1:8080/stream123.html
+   http://172.16.30.250:8080/stream123.html
+
+stream123.html
+stream234.html
+stream456.html
+
+* Embed code:
+-----------------------------------------------------------------------------
+<div class="mistvideo" id="stream123_mtIhxMN339lg">
+  <noscript>
+    <a href="http://172.16.30.250:8080/stream123.html" target="_blank">
+      Click here to play this video
+    </a>
+  </noscript>
+  <script>
+    var a = function(){
+      mistPlay("stream123",{
+        target: document.getElementById("stream123_mtIhxMN339lg")
+      });
+    };
+    if (!window.mistplayers) {
+      var p = document.createElement("script");
+      p.src = "http://172.16.30.250:8080/player.js"
+      document.head.appendChild(p);
+      p.onload = a;
+    }
+    else { a(); }
+  </script>
+</div>
+-----------------------------------------------------------------------------

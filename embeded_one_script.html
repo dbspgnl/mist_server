@@ -1,0 +1,44 @@
+<div class="mistvideo" id="mist_Zz4PoC6qF7bt">
+	<a href="http://localhost:8080/mist.html" target="_blank">
+		Click here to play this video
+	</a>
+</div>
+
+<div class="mistvideo" id="mist2_YEMaNDHyJJBb">
+	<a href="http://localhost:8080/mist2.html" target="_blank">
+		Click here to play this video
+	</a>
+</div>
+
+<!-- <video src="http://localhost:8080/hls/mist/index.m3u8"></video> -->
+
+<button onclick="start()">시작</button>
+
+<script>
+	var a = function () {
+		mistPlay("mist", {
+			muted: true,
+			autoplay: false,
+			target: document.getElementById("mist_Zz4PoC6qF7bt"),
+		});
+		// var video = document.querySelector('video');
+		// video.muted = true;
+	};
+	var b = function () {
+		mistPlay("mist2", {
+			target: document.getElementById("mist2_YEMaNDHyJJBb"),
+			autoplay: true
+		});
+	};
+	if (!window.mistplayers) {
+		var p = document.createElement("script");
+		p.src = "http://localhost:8080/player.js"
+		document.head.appendChild(p);
+		p.onload = setting;
+	}
+	// else { a(); b(); }
+	function setting() {
+		a();
+		// b();
+	}
+</script>
