@@ -1,0 +1,28 @@
+<script src="flv.js"></script>
+<video id="videoElement" autoplay muted style="width: 100%"></video>
+<script>
+	var videoList = [];
+    if (flvjs.isSupported()) {
+        var videoElement = document.getElementById('videoElement');
+        var flvPlayer = flvjs.createPlayer({
+            type: 'flv',
+            url: 'http://localhost:8080/mist1.flv'
+        });
+        flvPlayer.attachMediaElement(videoElement);
+        flvPlayer.load();
+        flvPlayer.play();
+
+		// 비디오 리스트
+		videoList.push(flvPlayer);
+		console.log(videoList);
+		console.log(videoList[0]);
+		console.log(videoList[0]._mediaDataSource.url);
+
+		flvPlayer.on(flvjs.Events.ERROR, () => {
+			console.log("에러 발생");
+			videoElement.remove();
+			videoList.remove(flvPlayer)
+			console.log(videoList);
+		})
+    }
+</script>
