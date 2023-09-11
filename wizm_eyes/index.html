@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Stream Viewer</title>
+	<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body>
+	<div>
+		<span>Live Stream</span>
+		<span><button onclick="exam_start()">start</button></span>
+		<span><button onclick="exam_start_all()">ALL</button></span>
+	</div>
+	<hr>
+	<div id="video_id" style="display:flex; flex-wrap: wrap; padding: 5px;">
+		<div class="video-card-layout">
+			<video id="video_id0" class="video-card" autoplay muted controls ></video>
+			<div class="video-title">ch.01</div>
+		</div>
+		<div class="video-card-layout">
+			<video id="video_id1" class="video-card" autoplay muted controls ></video>
+			<div class="video-title">ch.02</div>
+		</div>
+		<div class="video-card-layout">
+			<video id="video_id2" class="video-card" autoplay muted controls ></video>
+			<div class="video-title">ch.03</div>
+		</div>
+		<div class="video-card-layout">
+			<video id="video_id3" class="video-card" autoplay muted controls ></video>
+			<div class="video-title">ch.04</div>
+		</div>
+		<div class="video-card-layout">
+			<video id="video_id4" class="video-card" autoplay muted controls ></video>
+			<div class="video-title">ch.05</div>
+		</div>
+		<div class="video-card-layout">
+			<video id="video_id5" class="video-card" autoplay muted controls ></video>
+			<div class="video-title">ch.06</div>
+		</div>
+		<div class="video-card-layout">
+			<video id="video_id6" class="video-card" autoplay muted controls ></video>
+			<div class="video-title">ch.07</div>
+		</div>
+		<div class="video-card-layout">
+			<video id="video_id7" class="video-card" autoplay muted controls ></video>
+			<div class="video-title">ch.08</div>
+		</div>
+		<div class="video-card-layout">
+			<video id="video_id8" class="video-card" autoplay muted controls ></video>
+			<div class="video-title">ch.09</div>
+		</div>
+		<div class="video-card-layout">
+			<video id="video_id9" class="video-card" autoplay muted controls ></video>
+			<div class="video-title">ch.10</div>
+		</div>
+		<div class="video-card-layout">
+			<video id="video_id10" class="video-card" autoplay muted controls ></video>
+			<div class="video-title">ch.11</div>
+		</div>
+		<div class="video-card-layout">
+			<video id="video_id11" class="video-card" autoplay muted controls ></video>
+			<div class="video-title">ch.12</div>
+		</div>
+		<div class="video-card-layout">
+			<video id="video_id12" class="video-card" autoplay muted controls ></video>
+			<div class="video-title">ch.13</div>
+		</div>
+		<div class="video-card-layout">
+			<video id="video_id13" class="video-card" autoplay muted controls ></video>
+			<div class="video-title">ch.14</div>
+		</div>
+		<div class="video-card-layout">
+			<video id="video_id14" class="video-card" autoplay muted controls ></video>
+			<div class="video-title">ch.15</div>
+		</div>
+		<div class="video-card-layout">
+			<video id="video_id15" class="video-card" autoplay muted controls ></video>
+			<div class="video-title">ch.16</div>
+		</div>
+	</div>
+	<style>
+		* {margin:0; padding:0;}
+		.video-card-layout{width: 25%;}
+		.video-card{width: calc(100% - 10px); padding: 5px 5px 0 5px;}
+		.video-title{padding: 0 5px 0 5px; text-align: center;}
+	</style>
+	<script>
+		const exam_start = () => {
+			alert("start");
+		}
+		const exam_start_all = () => {
+			if(Hls.isSupported()){
+				for (let index = 0; index < 16; index++) {
+					console.log(index);
+					var hls = new Hls();
+					hls.loadSource(`http://localhost:8080/hls/mist${index%2}/index.m3u8`);
+					hls.attachMedia(document.getElementById(`video_id${index}`));
+					// hls.play();
+				}
+			}
+		}
+	</script>
+</body>
+</html>

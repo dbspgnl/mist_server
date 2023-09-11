@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+
+<body onkeydown="return false" oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
+	<video id="video1" autoplay muted style="width:25%;"></video>
+	<video id="video2" autoplay muted style="width:25%;"></video>
+	<video id="video3" autoplay muted style="width:25%;"></video>
+	<video id="video4" autoplay muted style="width:25%;"></video>
+	<video id="video5" autoplay muted style="width:25%;"></video>
+	<video id="video6" autoplay muted style="width:25%;"></video>
+	<video id="video7" autoplay muted style="width:25%;"></video>
+	<video id="video8" autoplay muted style="width:25%;"></video>
+
+	<script>
+		// var video1 = document.getElementById('video1');
+		// var video2 = document.getElementById('video2');
+
+		// var videoSrc1 = 'http://localhost:8080/hls/mist0/index.m3u8'; // <- 테스트 URL 이므로 본인의 URL 작성
+		// var videoSrc2 = 'http://localhost:8080/hls/mist1/index.m3u8'; // <- 테스트 URL 이므로 본인의 URL 작성
+
+		// var hls1 = null;
+		// var hls2 = null;
+
+		// if (
+		// 	video1.canPlayType('application/vnd.apple.mpegurl')
+		// 	|| video2.canPlayType('application/vnd.apple.mpegurl')
+		// ) { // 우선 HLS를 지원하는지 체크
+		// 	video1.src = videoSrc1;
+		// 	video2.src = videoSrc2;
+		// } else if (Hls.isSupported()) { // HLS를 지원하지 않는다면 hls.js를 지원
+
+		// 	hls1 = new Hls();
+		// 	hls2 = new Hls();
+
+		// 	hls1.loadSource(videoSrc1);
+		// 	hls1.attachMedia(video1);
+		// 	hls1.play();
+
+		// 	hls2.loadSource(videoSrc2);
+		// 	hls2.attachMedia(video2);
+		// 	hls2.play();
+		// }
+		if(Hls.isSupported()){
+			for (let index = 0; index < 8; index++) {
+				console.log(index);
+				var hls = new Hls();
+				hls.loadSource(`http://localhost:8080/hls/mist0/index.m3u8`);
+				hls.attachMedia(document.getElementById(`video${index+1}`));
+				// hls.play();
+			}
+		}
+
+
+	</script>
+</body>
+
+</html>

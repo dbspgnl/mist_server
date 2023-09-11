@@ -5,6 +5,8 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+	<!-- 최신버전 Alpha를 이용하고 싶다면 아래 스크립트를 사용 -->
+	<!-- <script src="https://cdn.jsdelivr.net/npm/hls.js@alpha"></script> -->
 </head>
 
 <body onkeydown="return false" oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
@@ -14,11 +16,8 @@
 		var video1 = document.getElementById('video1');
 		var video2 = document.getElementById('video2');
 
-		var videoSrc1 = 'http://localhost:8080/hls/mist/index.m3u8'; // <- 테스트 URL 이므로 본인의 URL 작성
-		var videoSrc2 = 'http://localhost:8080/hls/mist2/index.m3u8'; // <- 테스트 URL 이므로 본인의 URL 작성
-
-		var hls1 = null;
-		var hls2 = null;
+		var videoSrc1 = 'http://localhost:8080/hls/mist0/index.m3u8'; // <- 테스트 URL 이므로 본인의 URL 작성
+		var videoSrc2 = 'http://localhost:8080/hls/mist1/index.m3u8'; // <- 테스트 URL 이므로 본인의 URL 작성
 
 		if (
 			video1.canPlayType('application/vnd.apple.mpegurl')
@@ -27,43 +26,13 @@
 			video1.src = videoSrc1;
 			video2.src = videoSrc2;
 		} else if (Hls.isSupported()) { // HLS를 지원하지 않는다면 hls.js를 지원
-
-			hls1 = new Hls();
-			hls2 = new Hls();
-
+			var hls1 = new Hls();
+			var hls2 = new Hls();
 			hls1.loadSource(videoSrc1);
 			hls1.attachMedia(video1);
 			hls2.loadSource(videoSrc2);
 			hls2.attachMedia(video2);
-
-			hls1.play();
-			hls2.play();
-
 		}
-
-		hls2.on(Hls.Events.ERROR, function (event, data) {
-			var errorType = data.type;
-			var errorDetails = data.details;
-			var errorFatal = data.fatal;
-			console.log(errorDetails);
-			switch (data.details) {
-				case Hls.ErrorDetails.FRAG_LOAD_ERROR:
-					alert("로드 실패 에러");
-					break;
-				case Hls.ErrorTypes.MEDIA_ERROR:
-					console.log('fatal media error encountered, try to recover');
-					hls.recoverMediaError();
-					break;
-				case Hls.ErrorTypes.NETWORK_ERROR:
-					console.error('fatal network error encountered', data);
-					break;
-				default:
-					hls2.destroy();
-					break;
-			}
-		});
-
-
 	</script>
 </body>
 
