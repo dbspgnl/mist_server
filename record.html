@@ -12,7 +12,8 @@
 			<button class="record-button">녹화</button>
 			<button class="stop-button">중지</button>
 			<button class="play-button">녹화보기</button>
-			<a class="download-button">다운로드</a>
+			<a class="download-button">녹화 다운로드</a>
+			<button onclick="record_down()">서버 다운로드</button>
 		</div>
 		<div class="video-container">
 			<div class="video-item">
@@ -20,7 +21,7 @@
 				<video muted crossOrigin="anonymous" id="preview"></video>
 			</div>
 			<div class="video-item">
-				<h2>미리보기</h2>
+				<h2>녹화보기</h2>
 				<video id="recording"></video>
 			</div>
 		</div>
@@ -31,10 +32,11 @@
 		.wrapper {height: 100%; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;}
 		.video-container { display: flex; width: 550px; padding: 1rem; justify-content: space-around; }
 		.video-item > h2 { text-align: center;}
-		.video-item > video { border: 1px solid red; width: 250px; height: 188px; }
-		button, a { border: none; font-size: 14px; background: #ccc; padding: 0.5rem 1rem; cursor: pointer; text-decoration: none; color: black;}
+		.video-item > video { margin: 10px; border: 1px solid #ccc; width: 400px; height: 300px; }
+		button, a { border: none; font-size: 14px; background: #ececec; padding: 0.5rem 1rem; cursor: pointer; text-decoration: none; color: black;}
 	</style>	
 	<script src="flv.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 	<script>
 		const loadButton = document.querySelector(".load-button");
 		const recordButton = document.querySelector(".record-button");
@@ -49,58 +51,62 @@
 		let flvPlayer;
 
 		const videoLoad = () => {
-			let layout = document.getElementById(`preview`);
+			// if (Hls.isSupported()) {
+			// 	let layout = document.getElementById(`preview`);
+			// 	var hls = new Hls();
+			// 	hls.loadSource('http://localhost:8080/hls/mist0/index.m3u8');
+			// 	hls.attachMedia(layout);
+			// 	layout.play();
+			// }
+			
 
-			// flv
-			// flvPlayer = flvjs.createPlayer({
-			// 	type: 'flv',
-			// 	hasVideo: true,
-			// 	url: `http://localhost:8080/mist0.flv` // strea server 2개로 테스트
-			// });
-			// flvPlayer.attachMediaElement(layout);
-			// flvPlayer.load();
-			// flvPlayer.play();
+			//flv
+			let layout = document.getElementById(`preview`);
+			flvPlayer = flvjs.createPlayer({
+				type: 'flv',
+				duration: 0,
+				isLive: true,
+				url: `http://localhost:8080/mist0.flv` // strea server 2개로 테스트
+			});
+			flvPlayer.attachMediaElement(layout);
+			flvPlayer.load();
+			flvPlayer.play();
 
 			// cam
 			// navigator.mediaDevices.getUserMedia({video: true, audio: true})
 			// 	.then(stream => previewPlayer.srcObject = stream; startRecording(previewPlayer.captureStream());)
 
 			// mp4 
-			previewPlayer.src = "https://cdn.coverr.co/videos/coverr--07-022-22-girl-with-analog-camera_0011-6845/1080p.mp4";
-			previewPlayer.play();
+			// previewPlayer.src = "https://cdn.coverr.co/videos/coverr--07-022-22-girl-with-analog-camera_0011-6845/1080p.mp4";
+			// previewPlayer.src = "http://localhost:8080/mist0.mp4";
+			// previewPlayer.play();
 		}
 
 		const videoStart = () => {
 			console.log("녹화 시작...");
 			startRecording();
-			// setTimeout(() => {
-			// 	stopRecording();
-			// }, 13000);
+			// location.href = "http://localhost:8080/mist0.flv";
 		}
 
 		const startRecording = () => {
+			// navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(recorder);
 			recordedChunks = [];
 			let layout = document.getElementById(`preview`);
 			var stream = layout.captureStream();
-			var partSize = 0;
-			const MIN_BLOB_SIZE = 5000000;
 			recorder = new MediaRecorder(stream);
-			recorder.start(1000); // interval 주기로 처리
+			recorder.start(10000); // interval 주기로 처리
 			recorder.ondataavailable = (e) => {
-				// console.log(e.data);
-				// recordedChunks.push(e.data);
-
-				const blob = e.data;
-				partSize += blob.size;
-				recordedChunks.push(blob);
-				if (partSize >= MIN_BLOB_SIZE) {
-					let bigBlob = new Blob(parts, { type: blob.type });
-					// if the blob size doesn't need to be precise:
-					partSize = 0;
-					recordedChunks = [];
-				}
-				
+				recordedChunks.push(e.data);
 			}
+			// const recordedChunks = [];
+			recorder.addEventListener('dataavailable', function (e) {
+				if (e.data.size > 0) { recordedChunks.push(e.data); }
+			});
+
+			// 레코드 감지 후 처리
+			// recorder.onstop = (e) => {
+			// 	console.log("recorder stopped");
+			// };
 		}
 
 		const stopRecording = () => {
@@ -110,23 +116,22 @@
 		}
 
 		const playRecording = () => {
-			const recordedBlob = new Blob(recordedChunks, {type: "video/mp4"});
+			// const recordedBlob = new Blob(recordedChunks, {type: "video/mp4"});
+			const recordedBlob = new Blob(recordedChunks);
 			recoringPlayer.src = URL.createObjectURL(recordedBlob);
 			recoringPlayer.play();
 			downloadButton.href = recoringPlayer.src;
-			downloadButton.download = `recording_${new Date()}.mp4`;
+			downloadButton.download = `recording_${new Date()}.flv`;
 		}
 
-		// 레코드 감지 후 처리
-		// mediaRecorder.onstop = (e) => {
-		// 	console.log("data available after MediaRecorder.stop() called.");
-		// 	const audio = document.createElement("audio");
-		// 	audio.controls = true;
-		// 	const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
-		// 	const audioURL = window.URL.createObjectURL(blob);
-		// 	audio.src = audioURL;
-		// 	console.log("recorder stopped");
-		// };
+		const record_down = () => {
+			// downloadButton.href = "http://localhost:8080/mist0.ts/media/recordings/recording01.ts?recstart=0&recstop=10000";
+			// downloadButton.href = "http://localhost:8080/mist0.flv?passthrough=1";
+			// downloadButton.download = `recording_${new Date()}.ts`;
+			// downloadButton.click();
+			// console.log(testBlob);
+			location.href = "rtmp://localhost/live/media/recording/myrecording.flv?recstart=60000&recstop=180000"
+		}
 
 		loadButton.addEventListener("click", videoLoad);
 		recordButton.addEventListener("click", videoStart);
