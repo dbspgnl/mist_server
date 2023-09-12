@@ -1,22 +1,29 @@
-<div class="mistvideo" id="mist_Zz4PoC6qF7bt">
-	<a href="http://localhost:8080/mist0.html" target="_blank">
-		Click here to play this video
-	</a>
-</div>
-
-<div class="mistvideo" id="mist2_YEMaNDHyJJBb">
-	<a href="http://localhost:8080/mist2.html" target="_blank">
-		Click here to play this video
-	</a>
-</div>
-
-<!-- <video src="http://localhost:8080/hls/mist/index.m3u8"></video> -->
-
-<button onclick="start()">시작</button>
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+	<div class="mistvideo" id="mist_Zz4PoC6qF7bt">
+		<a href="http://localhost:8080/mist0.html" target="_blank">
+			Click here to play this video
+		</a>
+	</div>
+	
+	<div class="mistvideo" id="mist2_YEMaNDHyJJBb">
+		<a href="http://localhost:8080/mist1.html" target="_blank">
+			Click here to play this video
+		</a>
+	</div>
+	<!-- <video src="http://localhost:8080/hls/mist/index.m3u8"></video> -->
+	<button onclick="start()">시작</button>
+	
+</body>
 <script>
 	var a = function () {
-		mistPlay("mist", {
+		mistPlay("mist0", {
 			muted: true,
 			autoplay: false,
 			target: document.getElementById("mist_Zz4PoC6qF7bt"),
@@ -25,7 +32,7 @@
 		// video.muted = true;
 	};
 	var b = function () {
-		mistPlay("mist2", {
+		mistPlay("mist1", {
 			target: document.getElementById("mist2_YEMaNDHyJJBb"),
 			autoplay: true
 		});
@@ -42,3 +49,9 @@
 		// b();
 	}
 </script>
+</html>
+
+
+
+	
+

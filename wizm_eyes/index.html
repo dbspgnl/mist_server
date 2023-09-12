@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Stream Viewer</title>
-	<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+	<script src="/wizm_eyes/hls.js"></script>
 </head>
 <body>
 	<div>
@@ -79,27 +79,70 @@
 			<div class="video-title">ch.16</div>
 		</div>
 	</div>
-	<style>
-		* {margin:0; padding:0;}
-		.video-card-layout{width: 25%;}
-		.video-card{width: calc(100% - 10px); padding: 5px 5px 0 5px;}
-		.video-title{padding: 0 5px 0 5px; text-align: center;}
-	</style>
-	<script>
-		const exam_start = () => {
-			alert("start");
-		}
-		const exam_start_all = () => {
-			if(Hls.isSupported()){
-				for (let index = 0; index < 16; index++) {
-					console.log(index);
-					var hls = new Hls();
-					hls.loadSource(`http://localhost:8080/hls/mist${index%2}/index.m3u8`);
-					hls.attachMedia(document.getElementById(`video_id${index}`));
-					// hls.play();
-				}
+</body>
+<style>
+	* {margin:0; padding:0;}
+	.video-card-layout{width: 25%;}
+	.video-card{width: calc(100% - 10px); padding: 5px 5px 0 5px; margin-bottom: -4px;}
+	.video-title{margin: 0 5px 0 5px; text-align: center; background-color: #ddd;}
+</style>
+<script>
+	var offlines = [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true];
+	const exam_start = () => {
+		alert("start");
+	}
+	const exam_start_all = () => {
+		if(Hls.isSupported()){
+			for (let index = 0; index < 16; index++) {
+				var hls = new Hls();
+				hls.loadSource(`http://localhost:8080/hls/mist${index%2}/index.m3u8`);
+				hls.attachMedia(document.getElementById(`video_id${index}`));
+				// hls.play();
 			}
 		}
-	</script>
-</body>
+	}
+
+	setInterval(() => {
+		getServerInfo();
+	}, 3000);
+
+	const getServerInfo = () => {
+		const Http = new XMLHttpRequest();
+		const url = 'http://localhost:4242/api';
+		Http.open('GET', url);
+		Http.setRequestHeader('content-type', 'application/json');
+		Http.send();
+		Http.onreadystatechange = (e) => {
+			try {
+				const data = Http.responseText;
+				if(data) {
+					var server_info = JSON.parse(data).streams;
+					checkLive(server_info);
+				}
+			} catch (error) {}
+		};
+	}
+
+	const checkLive = (info) =>{
+		let keys = Object.keys(info);
+		for (let i = 0; i < keys.length; i++) {
+			let key = keys[i];
+			if(offlines[i] && info[key].online == 1){
+				setView(i);
+			}
+			else if(info[key].online != 1){ // not online
+				offlines[i] = true;
+			}
+		}
+	}
+
+	const setView = (index) => {
+		var hls = new Hls();
+		hls.loadSource(`http://localhost:8080/hls/mist${index}/index.m3u8`);
+		hls.attachMedia(document.getElementById(`video_id${index}`));
+		offlines[index] = false;
+	}
+
+
+</script>
 </html>
