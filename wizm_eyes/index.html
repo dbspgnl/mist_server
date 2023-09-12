@@ -9,8 +9,6 @@
 <body>
 	<div>
 		<span>Live Stream</span>
-		<span><button onclick="exam_start()">start</button></span>
-		<span><button onclick="exam_start_all()">ALL</button></span>
 	</div>
 	<hr>
 	<div id="video_id" style="display:flex; flex-wrap: wrap; padding: 5px;">
@@ -87,24 +85,19 @@
 	.video-title{margin: 0 5px 0 5px; text-align: center; background-color: #ddd;}
 </style>
 <script>
-	var offlines = [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true];
-	const exam_start = () => {
-		alert("start");
-	}
-	const exam_start_all = () => {
-		if(Hls.isSupported()){
-			for (let index = 0; index < 16; index++) {
-				var hls = new Hls();
-				hls.loadSource(`http://localhost:8080/hls/mist${index%2}/index.m3u8`);
-				hls.attachMedia(document.getElementById(`video_id${index}`));
-				// hls.play();
-			}
-		}
+	let offlines = [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true];
+
+	const doInterval = (interval) => {
+		let intervals = setInterval(() => {
+			getServerInfo();
+		}, interval);
 	}
 
-	setInterval(() => {
-		getServerInfo();
-	}, 3000);
+	const urlParams = new URLSearchParams(window.location.search);
+	if(urlParams.has('interval')){ // query 있으면 해당 쿼리값이 주기
+		interval = urlParams.get('interval');
+		doInterval(interval);
+	} else doInterval(10000); // default interval = 10초
 
 	const getServerInfo = () => {
 		const Http = new XMLHttpRequest();
@@ -142,7 +135,6 @@
 		hls.attachMedia(document.getElementById(`video_id${index}`));
 		offlines[index] = false;
 	}
-
 
 </script>
 </html>
