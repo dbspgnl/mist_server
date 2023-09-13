@@ -9,8 +9,6 @@
 <body>
 	<div>
 		<span>Live Stream</span>
-        <span><button onclick="exam_start_all()">start</button></span>
-		<input type="text" name="" id="exam_text" value="1">
 	</div>
 	<hr>
 	<div id="video_id" style="display:flex; flex-wrap: wrap; padding: 5px;">
@@ -82,22 +80,64 @@
 </body>
 <style>
 	* {margin:0; padding:0;}
-	.video-card-layout{width: 25%;}
+	.video-card-layout{width: 25%; display:none;}
 	.video-card{width: calc(100% - 10px); padding: 5px 5px 0 5px; margin-bottom: -4px;}
 	.video-title{margin: 0 5px 0 5px; text-align: center; background-color: #ddd;}
 </style>
 <script>
+	let offlines = [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true];
 
-	const exam_start_all = () => {
-		if(Hls.isSupported()){
-			let channel = document.querySelector("#exam_text").value;
-			for (let index = 0; index < channel; index++) {
-				var hls = new Hls();
-				hls.loadSource(`http://localhost:8080/hls/mist${index%channel}/index.m3u8`);
-				hls.attachMedia(document.getElementById(`video_id${index}`));
-				// hls.play();
+	const doInterval = (interval) => {
+		let intervals = setInterval(() => {
+			getServerInfo();
+		}, interval);
+	}
+
+	const urlParams = new URLSearchParams(window.location.search);
+	if(urlParams.has('interval')){ // query 있으면 해당 쿼리값이 주기
+		interval = urlParams.get('interval');
+		doInterval(interval);
+	} else doInterval(10000); // default interval = 10초
+
+	const getServerInfo = () => {
+		const Http = new XMLHttpRequest();
+		const url = 'http://localhost:4242/api';
+		Http.open('GET', url);
+		Http.setRequestHeader('content-type', 'application/json');
+		Http.send();
+		Http.onreadystatechange = (e) => {
+			try {
+				const data = Http.responseText;
+				if(data) {
+					var server_info = JSON.parse(data).streams;
+					checkLive(server_info);
+				}
+			} catch (error) {}
+		};
+	}
+
+	const checkLive = (info) =>{
+		let keys = Object.keys(info);
+		for (let i = 0; i < keys.length; i++) {
+			let key = keys[i];
+			if(offlines[i] && info[key].online == 1){
+				setView(i);
+			}
+			else if(info[key].online != 1){ // not online
+				var video_id = document.getElementById(`video_id${i}`);
+				video_id.parentNode.style.display = "none";
+				offlines[i] = true;
 			}
 		}
+	}
+
+	const setView = (index) => {
+		var video_id = document.getElementById(`video_id${index}`);
+		video_id.parentNode.style.display = "block";
+		var hls = new Hls();
+		hls.loadSource(`http://localhost:8080/hls/mist${index}/index.m3u8`);
+		hls.attachMedia(video_id);
+		offlines[index] = false;
 	}
 
 </script>
